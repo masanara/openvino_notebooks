@@ -1,0 +1,17 @@
+FROM ubuntu:22.04
+USER root
+RUN apt-get update && apt-get install -y curl gnupg
+COPY intel-gpu-jammy.list /etc/apt/sources.list.d/intel-gpu-jammy.list
+RUN curl -o - https://repositories.intel.com/gpu/intel-graphics.key \
+  | gpg --dearmor --output /usr/share/keyrings/intel-graphics.gpg
+RUN ln -sf /usr/share/zoneinfo/Asia/Tokyo /etc/localtime
+RUN apt-get update && \
+  apt-get install -y ocl-icd-libopencl1 intel-opencl-icd intel-level-zero-gpu level-zero python3-pip python3-opencv
+RUN python3 -m pip install --upgrade pip && python3 -m pip install openvino
+COPY requirements.txt /opt/app-root/requirements.txt
+RUN pip install -r /opt/app-root/requirements.txt
+RUN mkdir -p /opt/app-root/notebooks
+COPY notebooks/ /opt/app-root/notebooks
+WORKDIR /opt/app-root
+ENV HOME /model
+CMD ["jupyter","lab","--NotebookApp.token=","--ip","0.0.0.0","--allow-root","notebooks"]
