@@ -11,6 +11,7 @@ from ultralytics.utils import ops
 import sys
 from notebook_utils import download_file, VideoPlayer
 import torch
+import os
 
 def plot_one_box(box:np.ndarray, img:np.ndarray, color:Tuple[int, int, int] = None, mask:np.ndarray = None, label:str = None, line_thickness:int = 5):
     """
@@ -233,7 +234,10 @@ det_ov_model = core.read_model(det_model_path)
 seg_ov_model = core.read_model(seg_model_path)
 #det_ov_model = core.read_model('./nvidia_results/best.xml')
 
-device = "CPU"  # "GPU"
+device = os.environ.get(
+    'ACCELERATION_DEVICE', 'CPU'
+)
+
 if device != "CPU":
     det_ov_model.reshape({0: [1, 3, 640, 640]})
     available_devices = core.available_devices
@@ -290,7 +294,7 @@ def sysout_results(results:Dict, source_image:np.ndarray, label_map:Dict):
 import collections
 import time
 from IPython import display
-import pika, os
+import pika
 
 rtsp_src = os.environ.get(
     'RTSP_SRC', 'rtsp://192.168.0.100:8554/unicast'
