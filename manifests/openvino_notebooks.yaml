@@ -15,11 +15,11 @@ spec:
         app.kubernetes.io/part-of: openvino_notebooks
     spec:
       containers:
-      - image: masanara/ov:2.3
+      - image: masanara/ov:2.1
         name: workload
-        env:
-        - name: TRANSFORMERS_CACHE
-          value: "/model/.cache/huggingface/hub"
+#        env:
+#        - name: TRANSFORMERS_CACHE
+#          value: "/model/.cache/huggingface/hub"
         securityContext:
           runAsUser: 0
         resources:
@@ -55,3 +55,4 @@ spec:
     port: 8888
     name: http
     nodePort: 30008
+
